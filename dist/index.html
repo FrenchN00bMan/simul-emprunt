@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Simulateur de plan de financement immobilier - Calcul de prêts, tableau d'amortissement, taux d'endettement" />
+    <meta name="theme-color" content="#1a365d" />
+    <title>Simulateur de Prêt Immobilier</title>
+    <style>
+      /* Styles d'impression */
+      @media print {
+        body {
+          background: white !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        header {
+          background: #1a365d !important;
+          color: white !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .header-actions {
+          display: none !important;
+        }
+
+        .zone-emprunteur,
+        .zone-prets,
+        .zone-amortissement,
+        .graphiques {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+
+        .table-wrapper {
+          max-height: none !important;
+          overflow: visible !important;
+        }
+
+        .btn-calculateur,
+        .btn-toggle,
+        .modal-overlay {
+          display: none !important;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-BpNHH-rL.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BQgAC9gy.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
