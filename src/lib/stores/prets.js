@@ -182,10 +182,16 @@ export const tableauConsolide = derived(tableauxAmortissement, ($tableaux) => {
 });
 
 // Totaux globaux
-export const totauxGlobaux = derived(tableauxAmortissement, ($tableaux) => {
+export const totauxGlobaux = derived([tableauxAmortissement, prets], ([$tableaux, $prets]) => {
   const actifs = $tableaux.filter(t => t.actif && t.totaux);
 
+  // Calculer le capital total emprunté depuis les prêts actifs
+  const totalCapital = round2($prets
+    .filter(p => p.actif && p.montant > 0)
+    .reduce((sum, p) => sum + p.montant, 0));
+
   return {
+    totalCapital,
     totalInterets: round2(actifs.reduce((sum, t) => sum + t.totaux.totalInterets, 0)),
     totalAssurance: round2(actifs.reduce((sum, t) => sum + t.totaux.totalAssurance, 0)),
     totalCredit: round2(actifs.reduce((sum, t) => sum + t.totaux.totalInterets + t.totaux.totalAssurance, 0)),

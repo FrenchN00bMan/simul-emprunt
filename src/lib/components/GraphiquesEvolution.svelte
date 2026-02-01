@@ -10,19 +10,10 @@
   let canvasCRD;
   let canvasEndettement;
 
-  // Couleurs pour les prêts
-  const colors = [
-    '#3182ce', // Bleu
-    '#48bb78', // Vert
-    '#ed8936', // Orange
-    '#9f7aea', // Violet
-    '#f56565'  // Rouge
-  ];
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
 
-  // Tableau actifs pour les graphiques
   $: tableauxActifs = $tableauxAmortissement.filter(t => t.actif && t.tableau.length > 0);
 
-  // Mise à jour des graphiques quand les données changent
   $: if (canvasCRD && canvasEndettement && $tableauConsolide.length > 0) {
     updateCharts();
   }
@@ -53,18 +44,17 @@
     if (!canvasCRD) return;
 
     const ctx = canvasCRD.getContext('2d');
-
-    // Préparer les données
     const labels = $tableauConsolide.map(l => l.mois);
     const datasets = tableauxActifs.map((t, i) => ({
       label: t.label,
       data: $tableauConsolide.map(l => l.prets[t.index]?.crd || 0),
       borderColor: colors[i % colors.length],
-      backgroundColor: colors[i % colors.length] + '20',
+      backgroundColor: colors[i % colors.length] + '15',
       fill: true,
-      tension: 0.1,
+      tension: 0.2,
       pointRadius: 0,
-      pointHoverRadius: 4
+      pointHoverRadius: 3,
+      borderWidth: 2
     }));
 
     chartCRD = new Chart(ctx, {
@@ -75,39 +65,46 @@
         maintainAspectRatio: false,
         plugins: {
           title: {
-            display: true,
-            text: 'Capital Restant Dû par prêt',
-            font: { size: 14, weight: 'bold' },
-            color: '#1a365d'
+            display: false
           },
           legend: {
             position: 'bottom',
-            labels: { usePointStyle: true, boxWidth: 8 }
+            labels: {
+              usePointStyle: true,
+              boxWidth: 6,
+              padding: 12,
+              font: { size: 11, family: "'DM Sans', sans-serif" }
+            }
           },
           tooltip: {
             mode: 'index',
             intersect: false,
+            backgroundColor: '#1e293b',
+            titleFont: { family: "'DM Sans', sans-serif", size: 12 },
+            bodyFont: { family: "'JetBrains Mono', monospace", size: 11 },
+            padding: 10,
             callbacks: {
-              label: (context) => {
-                return `${context.dataset.label}: ${formatMontant(context.raw)}`;
-              }
+              label: (context) => `${context.dataset.label}: ${formatMontant(context.raw)}`
             }
           }
         },
         scales: {
           x: {
-            title: { display: true, text: 'Mois' },
+            title: { display: false },
+            grid: { display: false },
             ticks: {
-              maxTicksLimit: 12,
-              callback: (value, index) => {
-                // Afficher tous les 12 mois
-                return index % 12 === 0 ? labels[index] : '';
-              }
+              maxTicksLimit: 10,
+              font: { size: 10, family: "'JetBrains Mono', monospace" },
+              color: '#9ca3af',
+              callback: (value, index) => index % 12 === 0 ? labels[index] : ''
             }
           },
           y: {
-            title: { display: true, text: 'Capital (€)' },
+            title: { display: false },
+            grid: { color: '#f0f1f3' },
             ticks: {
+              font: { size: 10, family: "'JetBrains Mono', monospace" },
+              color: '#9ca3af',
               callback: (value) => formatMontantCourt(value)
             }
           }
@@ -125,8 +122,6 @@
     if (!canvasEndettement) return;
 
     const ctx = canvasEndettement.getContext('2d');
-
-    // Préparer les données
     const labels = $tableauConsolide.map(l => l.mois);
     const dataEndettement = $tableauConsolide.map(l =>
       calculerTauxEndettement(l.echeanceTotale, $indicateursEmprunteur.revenusMensuels)
@@ -141,19 +136,20 @@
           {
             label: 'Taux d\'endettement',
             data: dataEndettement,
-            borderColor: '#3182ce',
-            backgroundColor: '#3182ce20',
+            borderColor: '#3b82f6',
+            backgroundColor: '#3b82f615',
             fill: true,
-            tension: 0.1,
+            tension: 0.2,
             pointRadius: 0,
-            pointHoverRadius: 4
+            pointHoverRadius: 3,
+            borderWidth: 2
           },
           {
-            label: `Seuil max (${seuil}%)`,
+            label: `Seuil (${seuil}%)`,
             data: labels.map(() => seuil),
-            borderColor: '#f56565',
-            borderDash: [5, 5],
-            borderWidth: 2,
+            borderColor: '#ef4444',
+            borderDash: [4, 4],
+            borderWidth: 1.5,
             fill: false,
             pointRadius: 0
           }
@@ -163,41 +159,47 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          title: {
-            display: true,
-            text: 'Évolution du taux d\'endettement',
-            font: { size: 14, weight: 'bold' },
-            color: '#1a365d'
-          },
+          title: { display: false },
           legend: {
             position: 'bottom',
-            labels: { usePointStyle: true, boxWidth: 8 }
+            labels: {
+              usePointStyle: true,
+              boxWidth: 6,
+              padding: 12,
+              font: { size: 11, family: "'DM Sans', sans-serif" }
+            }
           },
           tooltip: {
             mode: 'index',
             intersect: false,
+            backgroundColor: '#1e293b',
+            titleFont: { family: "'DM Sans', sans-serif", size: 12 },
+            bodyFont: { family: "'JetBrains Mono', monospace", size: 11 },
+            padding: 10,
             callbacks: {
-              label: (context) => {
-                return `${context.dataset.label}: ${context.raw.toFixed(2)}%`;
-              }
+              label: (context) => `${context.dataset.label}: ${context.raw.toFixed(1)}%`
             }
           }
         },
         scales: {
           x: {
-            title: { display: true, text: 'Mois' },
+            title: { display: false },
+            grid: { display: false },
             ticks: {
-              maxTicksLimit: 12,
-              callback: (value, index) => {
-                return index % 12 === 0 ? labels[index] : '';
-              }
+              maxTicksLimit: 10,
+              font: { size: 10, family: "'JetBrains Mono', monospace" },
+              color: '#9ca3af',
+              callback: (value, index) => index % 12 === 0 ? labels[index] : ''
             }
           },
           y: {
-            title: { display: true, text: 'Taux (%)' },
+            title: { display: false },
+            grid: { color: '#f0f1f3' },
             min: 0,
             max: Math.max(45, Math.max(...dataEndettement) + 5),
             ticks: {
+              font: { size: 10, family: "'JetBrains Mono', monospace" },
+              color: '#9ca3af',
               callback: (value) => value + '%'
             }
           }
@@ -227,52 +229,65 @@
 </script>
 
 {#if $tableauConsolide.length > 0}
-  <section class="graphiques">
-    <h2>Graphiques d'évolution</h2>
-    <div class="charts-container">
-      <div class="chart-wrapper">
-        <canvas bind:this={canvasCRD}></canvas>
+  <section class="charts-section">
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">Capital restant dû</span>
+        </div>
+        <div class="chart-body">
+          <canvas bind:this={canvasCRD}></canvas>
+        </div>
       </div>
-      <div class="chart-wrapper">
-        <canvas bind:this={canvasEndettement}></canvas>
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">Taux d'endettement</span>
+        </div>
+        <div class="chart-body">
+          <canvas bind:this={canvasEndettement}></canvas>
+        </div>
       </div>
     </div>
   </section>
 {/if}
 
 <style>
-  .graphiques {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+  .charts-section {
+    margin-bottom: 1.25rem;
   }
 
-  h2 {
-    margin: 0 0 1rem 0;
-    font-size: 1.1rem;
-    color: #1a365d;
-    border-bottom: 2px solid #1a365d;
-    padding-bottom: 0.5rem;
-  }
-
-  .charts-container {
+  .charts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
-  .chart-wrapper {
-    background: white;
-    border-radius: 6px;
-    padding: 1rem;
-    border: 1px solid #e2e8f0;
-    height: 300px;
+  .chart-card {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+  }
+
+  .chart-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f1f3;
+    background: #f9fafb;
+  }
+
+  .chart-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .chart-body {
+    padding: 0.75rem 1rem 0.5rem;
+    height: 220px;
   }
 
   @media (max-width: 900px) {
-    .charts-container {
+    .charts-grid {
       grid-template-columns: 1fr;
     }
   }

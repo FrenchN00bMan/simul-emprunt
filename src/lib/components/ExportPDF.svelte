@@ -9,7 +9,6 @@
     isExporting = true;
 
     try {
-      // Créer une nouvelle fenêtre pour l'impression
       const printWindow = window.open('', '_blank', 'width=1200,height=800');
 
       if (!printWindow) {
@@ -23,7 +22,6 @@
       printWindow.document.write(content);
       printWindow.document.close();
 
-      // Attendre que le contenu soit chargé avant d'imprimer
       printWindow.onload = () => {
         setTimeout(() => {
           printWindow.print();
@@ -31,7 +29,6 @@
         }, 250);
       };
 
-      // Fallback si onload ne se déclenche pas
       setTimeout(() => {
         if (isExporting) {
           printWindow.print();
@@ -56,7 +53,6 @@
     const pretsActifs = $prets.filter(p => p.actif && p.montant > 0);
     const tableauxActifs = $tableauxAmortissement.filter(t => t.actif && t.tableau.length > 0);
 
-    // Trouver le taux d'endettement max
     let tauxEndettementMax = 0;
     let moisMax = 0;
     $tableauConsolide.forEach(ligne => {
@@ -67,7 +63,6 @@
       }
     });
 
-    // Calculer le montant total emprunté
     const montantTotalEmprunte = pretsActifs.reduce((sum, p) => sum + p.montant, 0);
 
     return `
@@ -103,11 +98,11 @@
       align-items: flex-start;
       margin-bottom: 20px;
       padding-bottom: 15px;
-      border-bottom: 3px solid #1a365d;
+      border-bottom: 3px solid #2563eb;
     }
 
     .header h1 {
-      color: #1a365d;
+      color: #1a1d21;
       font-size: 22px;
       font-weight: 700;
       margin: 0;
@@ -115,22 +110,22 @@
 
     .header-info {
       text-align: right;
-      color: #4a5568;
+      color: #6b7280;
       font-size: 12px;
     }
 
     .header-info strong {
-      color: #1a365d;
+      color: #1a1d21;
       font-size: 14px;
     }
 
     h2 {
-      color: #1a365d;
+      color: #1a1d21;
       font-size: 14px;
       font-weight: 600;
       margin: 20px 0 10px 0;
       padding-bottom: 5px;
-      border-bottom: 2px solid #e2e8f0;
+      border-bottom: 2px solid #e5e7eb;
     }
 
     .grid-2 {
@@ -148,26 +143,26 @@
     }
 
     .card {
-      background: #f7fafc;
-      border: 1px solid #e2e8f0;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
       border-radius: 6px;
       padding: 12px;
     }
 
     .card-title {
       font-weight: 600;
-      color: #1a365d;
+      color: #1a1d21;
       font-size: 12px;
       margin-bottom: 8px;
       padding-bottom: 5px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .info-row {
       display: flex;
       justify-content: space-between;
       padding: 4px 0;
-      border-bottom: 1px dotted #e2e8f0;
+      border-bottom: 1px dotted #e5e7eb;
     }
 
     .info-row:last-child {
@@ -175,32 +170,32 @@
     }
 
     .info-label {
-      color: #4a5568;
+      color: #6b7280;
       font-size: 10px;
     }
 
     .info-value {
       font-weight: 600;
-      color: #2d3748;
-      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+      color: #374151;
+      font-family: 'SF Mono', Monaco, monospace;
       font-size: 11px;
     }
 
     .info-value.highlight {
-      color: #1a365d;
+      color: #1a1d21;
       font-size: 13px;
     }
 
     .info-value.danger {
-      color: #c53030;
+      color: #dc2626;
     }
 
     .info-value.success {
-      color: #276749;
+      color: #059669;
     }
 
     .totaux-box {
-      background: #1a365d;
+      background: #1e40af;
       color: white;
       border-radius: 6px;
       padding: 15px;
@@ -225,7 +220,7 @@
     .totaux-item .value {
       font-size: 16px;
       font-weight: 700;
-      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+      font-family: 'SF Mono', Monaco, monospace;
     }
 
     table {
@@ -236,7 +231,7 @@
     }
 
     thead {
-      background: #1a365d;
+      background: #1e40af;
       color: white;
     }
 
@@ -250,42 +245,42 @@
     }
 
     tbody tr {
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     tbody tr:nth-child(even) {
-      background: #f7fafc;
+      background: #f9fafb;
     }
 
     td {
       padding: 6px;
       text-align: right;
-      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+      font-family: 'SF Mono', Monaco, monospace;
     }
 
     td.mois {
       text-align: center;
       font-weight: 600;
-      background: #edf2f7;
+      background: #f3f4f6;
     }
 
     td.total {
       font-weight: 700;
-      background: #ebf8ff;
-      color: #1a365d;
+      background: #eff6ff;
+      color: #1e40af;
     }
 
     td.danger {
-      color: #c53030;
+      color: #dc2626;
       font-weight: 700;
     }
 
     .footer {
       margin-top: 20px;
       padding-top: 10px;
-      border-top: 1px solid #e2e8f0;
+      border-top: 1px solid #e5e7eb;
       font-size: 9px;
-      color: #718096;
+      color: #9ca3af;
       text-align: center;
     }
 
@@ -418,7 +413,7 @@
   </table>
 
   <div class="footer">
-    Document généré le ${date} - Simulation à titre indicatif, ne constitue pas une offre de prêt
+    Document généré le ${date} — Simulation à titre indicatif, ne constitue pas une offre de prêt
   </div>
 </body>
 </html>
@@ -429,16 +424,9 @@
     const lignes = [];
     const total = $tableauConsolide.length;
 
-    // Créer un échantillon intelligent du tableau
     const indices = new Set();
-
-    // Premiers mois (1-12)
     for (let i = 0; i < Math.min(12, total); i++) indices.add(i);
-
-    // Ensuite tous les 6 mois jusqu'à la fin
     for (let i = 12; i < total; i += 6) indices.add(i);
-
-    // Toujours inclure le dernier mois
     indices.add(total - 1);
 
     const sortedIndices = [...indices].sort((a, b) => a - b);
@@ -495,59 +483,67 @@
 </script>
 
 <button
-  class="btn-export"
+  class="header-btn export"
   on:click={exporterPDF}
   disabled={isExporting || $tableauConsolide.length === 0}
-  title="Ouvrir une fenêtre d'impression pour sauvegarder en PDF"
+  title="Exporter en PDF"
 >
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
     <polyline points="14,2 14,8 20,8"/>
     <line x1="16" y1="13" x2="8" y2="13"/>
     <line x1="16" y1="17" x2="8" y2="17"/>
-    <polyline points="10,9 9,9 8,9"/>
   </svg>
-  {#if isExporting}
-    Export...
-  {:else}
-    Exporter PDF
-  {/if}
+  <span class="btn-text">{isExporting ? 'Export...' : 'Exporter PDF'}</span>
 </button>
 
 <style>
-  .btn-export {
+  .header-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-    color: white;
-    border: none;
+    gap: 0.375rem;
+    padding: 0.4375rem 0.75rem;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
     border-radius: 6px;
-    font-size: 0.85rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(72, 187, 120, 0.3);
+    transition: all 0.15s ease;
+    font-family: 'DM Sans', sans-serif;
   }
 
-  .btn-export:hover:not(:disabled) {
-    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(72, 187, 120, 0.4);
+  .header-btn.export {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
   }
 
-  .btn-export:active:not(:disabled) {
-    transform: translateY(0);
+  .header-btn.export:hover:not(:disabled) {
+    background: #059669;
+    border-color: #059669;
   }
 
-  .btn-export:disabled {
-    background: #a0aec0;
+  .header-btn:disabled {
+    background: #d1d5db;
+    border-color: #d1d5db;
     cursor: not-allowed;
-    box-shadow: none;
+    opacity: 0.7;
   }
 
-  .btn-export svg {
-    flex-shrink: 0;
+  .header-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .btn-text {
+    display: inline;
+  }
+
+  @media (max-width: 640px) {
+    .btn-text {
+      display: none;
+    }
   }
 </style>

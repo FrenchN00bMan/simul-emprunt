@@ -30,11 +30,11 @@
   }, {});
 </script>
 
-<button class="btn-ouvrir" on:click={toggleModal}>
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<button class="header-btn" on:click={toggleModal}>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
   </svg>
-  Assurances
+  <span class="btn-text">Assurances</span>
 </button>
 
 {#if isOpen}
@@ -42,8 +42,8 @@
     <div class="modal" on:click|stopPropagation role="dialog" aria-modal="true">
       <div class="modal-header">
         <h3>Barème des assurances</h3>
-        <button class="btn-fermer" on:click={toggleModal} aria-label="Fermer">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="btn-close" on:click={toggleModal} aria-label="Fermer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"/>
             <line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
@@ -83,7 +83,7 @@
                     <span class="details">
                       <span class="taux">{item.taux.toFixed(3)}%</span>
                       <span class="crd" class:active={item.surCRD}>
-                        {item.surCRD ? 'Sur CRD' : 'Capital initial'}
+                        {item.surCRD ? 'Sur CRD' : 'Capital'}
                       </span>
                     </span>
                   </button>
@@ -98,24 +98,34 @@
 {/if}
 
 <style>
-  .btn-ouvrir {
+  .header-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 0.375rem;
+    padding: 0.4375rem 0.75rem;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
     border-radius: 6px;
-    font-size: 0.85rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
+    font-family: 'DM Sans', sans-serif;
   }
 
-  .btn-ouvrir:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+  .header-btn:hover {
+    background: #e5e7eb;
+    border-color: #d1d5db;
+  }
+
+  .header-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .btn-text {
+    display: inline;
   }
 
   .modal-overlay {
@@ -124,13 +134,12 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(4px);
+    background: rgba(15, 23, 42, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    animation: fadeIn 0.2s ease;
+    animation: fadeIn 0.15s ease;
   }
 
   @keyframes fadeIn {
@@ -140,18 +149,18 @@
 
   .modal {
     background: white;
-    border-radius: 16px;
-    max-width: 550px;
-    max-height: 85vh;
+    border-radius: 12px;
+    max-width: 500px;
+    max-height: 80vh;
     width: 95%;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    animation: slideUp 0.3s ease;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.2s ease;
   }
 
   @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
@@ -159,127 +168,131 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
   }
 
   .modal-header h3 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
-    color: #1e293b;
+    color: #1a1d21;
   }
 
-  .btn-fermer {
-    width: 36px;
-    height: 36px;
+  .btn-close {
+    width: 32px;
+    height: 32px;
     border: none;
-    background: #f1f5f9;
-    color: #64748b;
+    background: #f3f4f6;
+    color: #6b7280;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
   }
 
-  .btn-fermer:hover {
-    background: #e2e8f0;
-    color: #1e293b;
+  .btn-close svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .btn-close:hover {
+    background: #e5e7eb;
+    color: #1a1d21;
   }
 
   .modal-body {
-    padding: 1.5rem;
+    padding: 1.25rem;
     overflow-y: auto;
   }
 
   .select-pret {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
+    gap: 0.375rem;
+    margin-bottom: 1.25rem;
   }
 
   .select-pret label {
-    font-size: 0.75rem;
-    color: #64748b;
+    font-size: 0.625rem;
+    color: #6b7280;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
   }
 
   .select-pret select {
-    padding: 0.65rem 0.75rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    background: #f8fafc;
+    padding: 0.5rem 0.75rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    background: #fafbfc;
     cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
   }
 
   .select-pret select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #3b82f6;
     background: white;
   }
 
   .no-pret {
-    background: #fef3c7;
+    background: #fffbeb;
     color: #92400e;
-    padding: 1rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
     text-align: center;
     margin-bottom: 1rem;
+    border: 1px solid #fde68a;
   }
 
   .table-container {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
   }
 
   .categorie h4 {
     margin: 0 0 0.5rem 0;
-    font-size: 0.75rem;
-    color: #64748b;
+    font-size: 0.625rem;
+    color: #6b7280;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
   }
 
   .items-list {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.25rem;
   }
 
   .item-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    padding: 0.625rem 0.875rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s ease;
     text-align: left;
     width: 100%;
+    font-family: 'DM Sans', sans-serif;
   }
 
   .item-row:hover:not(:disabled) {
-    background: #667eea;
-    border-color: #667eea;
-    color: white;
-    transform: translateX(4px);
-  }
-
-  .item-row:hover:not(:disabled) .profil {
+    background: #2563eb;
+    border-color: #2563eb;
     color: white;
   }
 
+  .item-row:hover:not(:disabled) .profil,
   .item-row:hover:not(:disabled) .taux {
     color: white;
   }
@@ -295,35 +308,42 @@
   }
 
   .profil {
-    font-size: 0.85rem;
-    color: #1e293b;
+    font-size: 0.8125rem;
+    color: #1a1d21;
     font-weight: 500;
   }
 
   .details {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
 
   .taux {
-    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-weight: 600;
-    font-size: 0.9rem;
-    color: #667eea;
+    font-size: 0.8125rem;
+    color: #2563eb;
   }
 
   .crd {
-    font-size: 0.7rem;
-    padding: 0.25rem 0.5rem;
-    background: #e2e8f0;
-    border-radius: 4px;
-    color: #64748b;
+    font-size: 0.625rem;
+    padding: 0.1875rem 0.375rem;
+    background: #e5e7eb;
+    border-radius: 3px;
+    color: #6b7280;
     font-weight: 500;
+    text-transform: uppercase;
   }
 
   .crd.active {
     background: #dbeafe;
     color: #1d4ed8;
+  }
+
+  @media (max-width: 640px) {
+    .btn-text {
+      display: none;
+    }
   }
 </style>

@@ -102,11 +102,11 @@
   }
 </script>
 
-<button class="btn-toggle" on:click={() => isPanelOpen = !isPanelOpen}>
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<button class="header-btn" on:click={() => isPanelOpen = !isPanelOpen}>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
   </svg>
-  Simulations
+  <span class="btn-text">Simulations</span>
   {#if simulations.length > 0}
     <span class="badge">{simulations.length}</span>
   {/if}
@@ -116,14 +116,9 @@
   <div class="panel-overlay" on:click={() => isPanelOpen = false} on:keydown={(e) => e.key === 'Escape' && (isPanelOpen = false)} role="button" tabindex="0"></div>
   <div class="panel" role="dialog" aria-modal="true">
     <div class="panel-header">
-      <h3>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-        </svg>
-        Mes simulations
-      </h3>
+      <h3>Mes simulations</h3>
       <button class="btn-close" on:click={() => isPanelOpen = false} aria-label="Fermer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18"/>
           <line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
@@ -132,7 +127,7 @@
 
     <div class="panel-body">
       <div class="section">
-        <h4>Sauvegarder</h4>
+        <div class="section-label">Sauvegarder</div>
         <div class="save-form">
           <input
             type="text"
@@ -141,7 +136,7 @@
             on:keydown={(e) => e.key === 'Enter' && sauvegarderSimulation()}
           />
           <button class="btn-save" on:click={sauvegarderSimulation}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
               <polyline points="17,21 17,13 7,13 7,21"/>
               <polyline points="7,3 7,8 15,8"/>
@@ -151,10 +146,10 @@
       </div>
 
       <div class="section">
-        <h4>Import / Export</h4>
+        <div class="section-label">Import / Export</div>
         <div class="json-actions">
           <button class="btn-action" on:click={exporterJSON}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="7,10 12,15 17,10"/>
               <line x1="12" y1="15" x2="12" y2="3"/>
@@ -162,7 +157,7 @@
             Exporter JSON
           </button>
           <label class="btn-action">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="17,8 12,3 7,8"/>
               <line x1="12" y1="3" x2="12" y2="15"/>
@@ -173,11 +168,11 @@
         </div>
       </div>
 
-      <div class="section simulations-section">
-        <h4>Historique ({simulations.length})</h4>
+      <div class="section">
+        <div class="section-label">Historique ({simulations.length})</div>
         {#if simulations.length === 0}
           <div class="empty">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
             </svg>
             <p>Aucune simulation sauvegardée</p>
@@ -192,13 +187,13 @@
                 </div>
                 <div class="simulation-actions">
                   <button class="btn-charger" on:click={() => chargerSimulation(simulation)} title="Charger">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="1,4 1,10 7,10"/>
                       <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
                     </svg>
                   </button>
                   <button class="btn-supprimer" on:click={() => supprimerSimulation(simulation.id)} title="Supprimer">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="3,6 5,6 21,6"/>
                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                     </svg>
@@ -214,32 +209,45 @@
 {/if}
 
 <style>
-  .btn-toggle {
+  .header-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 0.375rem;
+    padding: 0.4375rem 0.75rem;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
     border-radius: 6px;
-    font-size: 0.85rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
+    font-family: 'DM Sans', sans-serif;
   }
 
-  .btn-toggle:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+  .header-btn:hover {
+    background: #e5e7eb;
+    border-color: #d1d5db;
+  }
+
+  .header-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .btn-text {
+    display: inline;
   }
 
   .badge {
-    background: rgba(255, 255, 255, 0.25);
-    padding: 0.15rem 0.5rem;
-    border-radius: 10px;
-    font-size: 0.7rem;
+    background: #2563eb;
+    color: white;
+    padding: 0.125rem 0.375rem;
+    border-radius: 8px;
+    font-size: 0.625rem;
     font-weight: 600;
+    min-width: 18px;
+    text-align: center;
   }
 
   .panel-overlay {
@@ -248,9 +256,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(15, 23, 42, 0.5);
+    background: rgba(15, 23, 42, 0.4);
     z-index: 999;
-    animation: fadeIn 0.2s ease;
+    animation: fadeIn 0.15s ease;
   }
 
   @keyframes fadeIn {
@@ -262,75 +270,78 @@
     position: fixed;
     top: 0;
     right: 0;
-    width: 380px;
+    width: 360px;
     max-width: 100%;
     height: 100vh;
     background: white;
-    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    animation: slideIn 0.3s ease;
+    animation: slideIn 0.2s ease;
   }
 
   @keyframes slideIn {
-    from { opacity: 0; transform: translateX(100%); }
-    to { opacity: 1; transform: translateX(0); }
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
   }
 
   .panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
   }
 
   .panel-header h3 {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    color: #1a1d21;
   }
 
   .btn-close {
     width: 32px;
     height: 32px;
     border: none;
-    background: rgba(255, 255, 255, 0.15);
-    color: white;
+    background: #f3f4f6;
+    color: #6b7280;
     border-radius: 6px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
+  }
+
+  .btn-close svg {
+    width: 16px;
+    height: 16px;
   }
 
   .btn-close:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: #e5e7eb;
+    color: #1a1d21;
   }
 
   .panel-body {
     flex: 1;
     overflow-y: auto;
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
 
   .section {
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.5rem;
   }
 
-  .section h4 {
-    margin: 0 0 0.75rem 0;
-    font-size: 0.7rem;
-    color: #64748b;
+  .section-label {
+    font-size: 0.625rem;
+    color: #6b7280;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.625rem;
   }
 
   .save-form {
@@ -340,34 +351,40 @@
 
   .save-form input {
     flex: 1;
-    padding: 0.65rem 0.75rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    background: #f8fafc;
+    padding: 0.5rem 0.75rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    background: #fafbfc;
+    font-family: 'DM Sans', sans-serif;
   }
 
   .save-form input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #3b82f6;
     background: white;
   }
 
   .btn-save {
-    padding: 0 1rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 0 0.875rem;
+    background: #2563eb;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
+  }
+
+  .btn-save svg {
+    width: 16px;
+    height: 16px;
   }
 
   .btn-save:hover {
-    transform: scale(1.05);
+    background: #1d4ed8;
   }
 
   .json-actions {
@@ -380,21 +397,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.65rem 0.75rem;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.8rem;
+    gap: 0.375rem;
+    padding: 0.5rem 0.625rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.75rem;
     font-weight: 500;
-    color: #475569;
+    color: #4b5563;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .btn-action svg {
+    width: 14px;
+    height: 14px;
   }
 
   .btn-action:hover {
-    background: #e2e8f0;
-    color: #1e293b;
+    background: #f3f4f6;
+    color: #1a1d21;
   }
 
   .btn-action input {
@@ -404,23 +427,25 @@
     opacity: 0;
   }
 
-  .simulations-section {
-    flex: 1;
-  }
-
   .empty {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    color: #94a3b8;
+    color: #9ca3af;
     text-align: center;
   }
 
+  .empty svg {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 0.5rem;
+  }
+
   .empty p {
-    margin: 0.75rem 0 0 0;
-    font-size: 0.85rem;
+    margin: 0;
+    font-size: 0.8125rem;
   }
 
   .simulations-list {
@@ -436,55 +461,62 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.85rem 1rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    transition: all 0.2s ease;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.15s ease;
   }
 
   .simulations-list li:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
+    background: #f3f4f6;
+    border-color: #d1d5db;
   }
 
   .simulation-info {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.125rem;
     min-width: 0;
   }
 
   .simulation-info .nom {
     font-weight: 600;
-    color: #1e293b;
-    font-size: 0.9rem;
+    color: #1a1d21;
+    font-size: 0.8125rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .simulation-info .date {
-    font-size: 0.7rem;
-    color: #94a3b8;
+    font-size: 0.6875rem;
+    color: #9ca3af;
+    font-family: 'JetBrains Mono', monospace;
   }
 
   .simulation-actions {
     display: flex;
-    gap: 0.35rem;
+    gap: 0.25rem;
   }
 
   .btn-charger,
   .btn-supprimer {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border: none;
-    border-radius: 6px;
+    border-radius: 5px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
+  }
+
+  .btn-charger svg,
+  .btn-supprimer svg {
+    width: 14px;
+    height: 14px;
   }
 
   .btn-charger {
@@ -505,5 +537,11 @@
   .btn-supprimer:hover {
     background: #dc2626;
     color: white;
+  }
+
+  @media (max-width: 640px) {
+    .btn-text {
+      display: none;
+    }
   }
 </style>

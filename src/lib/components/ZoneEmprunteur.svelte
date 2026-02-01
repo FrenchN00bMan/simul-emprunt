@@ -10,363 +10,448 @@
   }
 </script>
 
-<section class="zone-emprunteur">
-  <div class="section-header">
-    <h2>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
-      Emprunteur
-    </h2>
+<div class="emprunteur-panel">
+  <div class="panel-header">
+    <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
+    <span class="header-title">Emprunteur</span>
   </div>
 
-  <div class="form-content">
-    <div class="form-group full-width">
+  <div class="form-section">
+    <div class="field-group full">
       <label for="nomClient">Nom du dossier</label>
       <input
         type="text"
         id="nomClient"
         bind:value={$emprunteur.nomClient}
-        placeholder="Ex: Famille Dupont"
+        placeholder="Ex: Famille Martin"
+        class="input-text"
       />
     </div>
 
-    <div class="form-group">
-      <label for="revenusAnnuels">Revenus annuels bruts</label>
-      <div class="input-with-unit">
+    <div class="field-row">
+      <div class="field-group">
+        <label for="revenusAnnuels">Revenus annuels</label>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            id="revenusAnnuels"
+            bind:value={$emprunteur.revenusAnnuels}
+            min="0"
+            step="1000"
+          />
+          <span class="input-suffix">€/an</span>
+        </div>
+      </div>
+
+      <div class="field-group small">
+        <label for="nbPersonnes">Foyer</label>
         <input
           type="number"
-          id="revenusAnnuels"
-          bind:value={$emprunteur.revenusAnnuels}
-          min="0"
-          step="1000"
+          id="nbPersonnes"
+          bind:value={$emprunteur.nbPersonnes}
+          min="1"
+          max="9"
+          class="input-centered"
         />
-        <span class="unit">€/an</span>
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="nbPersonnes">Personnes au foyer</label>
-      <input
-        type="number"
-        id="nbPersonnes"
-        bind:value={$emprunteur.nbPersonnes}
-        min="1"
-        max="9"
-      />
-    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label for="tauxEndettementExistant">Endett. existant</label>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            id="tauxEndettementExistant"
+            bind:value={$emprunteur.tauxEndettementExistant}
+            min="0"
+            max="100"
+            step="0.1"
+          />
+          <span class="input-suffix">%</span>
+        </div>
+      </div>
 
-    <div class="form-group">
-      <label for="tauxEndettementExistant">Endettement existant</label>
-      <div class="input-with-unit">
-        <input
-          type="number"
-          id="tauxEndettementExistant"
-          bind:value={$emprunteur.tauxEndettementExistant}
-          min="0"
-          max="100"
-          step="0.1"
-        />
-        <span class="unit">%</span>
+      <div class="field-group">
+        <label for="seuilEndettementMax">Seuil max</label>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            id="seuilEndettementMax"
+            bind:value={$emprunteur.seuilEndettementMax}
+            min="0"
+            max="40"
+            step="1"
+          />
+          <span class="input-suffix">%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-label">Charges & Revenus locatifs</div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label for="loyerActuel">Loyer actuel</label>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            id="loyerActuel"
+            bind:value={$emprunteur.loyerActuel}
+            min="0"
+          />
+          <span class="input-suffix">€</span>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="loyersPercus">Loyers perçus</label>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            id="loyersPercus"
+            bind:value={$emprunteur.loyersPercus}
+            min="0"
+          />
+          <span class="input-suffix">€</span>
+        </div>
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="loyerActuel">Loyer actuel</label>
-      <div class="input-with-unit">
-        <input
-          type="number"
-          id="loyerActuel"
-          bind:value={$emprunteur.loyerActuel}
-          min="0"
-        />
-        <span class="unit">€/mois</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="loyersPayesEtCharges">Autres charges</label>
-      <div class="input-with-unit">
+    <div class="field-group">
+      <label for="loyersPayesEtCharges">Autres charges mensuelles</label>
+      <div class="input-wrapper">
         <input
           type="number"
           id="loyersPayesEtCharges"
           bind:value={$emprunteur.loyersPayesEtCharges}
           min="0"
         />
-        <span class="unit">€/mois</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="loyersPercus">Loyers perçus</label>
-      <div class="input-with-unit">
-        <input
-          type="number"
-          id="loyersPercus"
-          bind:value={$emprunteur.loyersPercus}
-          min="0"
-        />
-        <span class="unit">€/mois</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="seuilEndettementMax">Seuil endettement max</label>
-      <div class="input-with-unit">
-        <input
-          type="number"
-          id="seuilEndettementMax"
-          bind:value={$emprunteur.seuilEndettementMax}
-          min="0"
-          max="40"
-          step="1"
-        />
-        <span class="unit">%</span>
+        <span class="input-suffix">€/mois</span>
       </div>
     </div>
   </div>
 
-  <div class="indicateurs">
-    <div class="indicateur-title">Indicateurs calculés</div>
+  <div class="indicators-section">
+    <div class="section-label">Indicateurs</div>
 
-    <div class="indicateur-grid">
-      <div class="indicateur">
-        <span class="label">Revenus mensuels</span>
-        <span class="value">{formatMontant($indicateursEmprunteur.revenusMensuels)}</span>
+    <div class="indicator-row">
+      <div class="indicator">
+        <span class="indicator-label">Revenus mensuels</span>
+        <span class="indicator-value">{formatMontant($indicateursEmprunteur.revenusMensuels)}</span>
       </div>
-
-      <div class="indicateur">
-        <span class="label">Charges crédit</span>
-        <span class="value">{formatMontant($indicateursEmprunteur.chargesCreditExistantes)}/mois</span>
+      <div class="indicator">
+        <span class="indicator-label">Charges crédit</span>
+        <span class="indicator-value">{formatMontant($indicateursEmprunteur.chargesCreditExistantes)}</span>
       </div>
+    </div>
 
-      <div class="indicateur highlight" class:ok={$indicateursEmprunteur.qfOk} class:alerte={!$indicateursEmprunteur.qfOk}>
-        <span class="label">QF RAV</span>
-        <span class="value">{formatMontant($indicateursEmprunteur.qfRAV)}</span>
-        <span class="status">
-          {#if $indicateursEmprunteur.qfOk}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-              <polyline points="20,6 9,17 4,12"/>
-            </svg>
-          {:else}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          {/if}
-        </span>
+    <div class="indicator-qf" class:ok={$indicateursEmprunteur.qfOk} class:alert={!$indicateursEmprunteur.qfOk}>
+      <div class="qf-main">
+        <span class="qf-label">Quotient Familial (RAV)</span>
+        <span class="qf-value">{formatMontant($indicateursEmprunteur.qfRAV)}</span>
       </div>
-
-      <div class="indicateur">
-        <span class="label">QF référence</span>
-        <span class="value">{formatMontant($indicateursEmprunteur.qfReference)}</span>
+      <div class="qf-reference">
+        <span class="qf-ref-label">Réf. mini</span>
+        <span class="qf-ref-value">{formatMontant($indicateursEmprunteur.qfReference)}</span>
+      </div>
+      <div class="qf-status">
+        {#if $indicateursEmprunteur.qfOk}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20,6 9,17 4,12"/>
+          </svg>
+        {:else}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        {/if}
       </div>
     </div>
   </div>
-</section>
+</div>
 
 <style>
-  .zone-emprunteur {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    overflow: hidden;
-  }
-
-  .section-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 1rem 1.25rem;
-  }
-
-  .section-header h2 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .form-content {
-    padding: 1.25rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .form-group {
+  .emprunteur-panel {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
   }
 
-  .form-group.full-width {
-    grid-column: 1 / -1;
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    color: white;
+  }
+
+  .header-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .header-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .form-section {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f0f1f3;
+  }
+
+  .section-label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    flex: 1;
+  }
+
+  .field-group.full {
+    margin-bottom: 0.875rem;
+  }
+
+  .field-group.small {
+    flex: 0 0 70px;
+  }
+
+  .field-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .field-row:last-child {
+    margin-bottom: 0;
   }
 
   label {
-    font-size: 0.7rem;
-    color: #64748b;
+    font-size: 0.6875rem;
     font-weight: 600;
+    color: #4b5563;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
 
   input {
-    padding: 0.6rem 0.75rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-    background: #f8fafc;
+    width: 100%;
+    padding: 0.5rem 0.625rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: #fafbfc;
+    transition: all 0.15s ease;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: #1a1d21;
+  }
+
+  input[type="text"] {
+    font-family: 'DM Sans', sans-serif;
   }
 
   input[type="number"] {
     text-align: right;
-    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-    font-weight: 500;
+    padding-right: 3rem;
+  }
+
+  .input-centered {
+    text-align: center !important;
+    padding-right: 0.625rem !important;
   }
 
   input:focus {
     outline: none;
-    border-color: #667eea;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    border-color: #3b82f6;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
 
   input::placeholder {
-    color: #a0aec0;
+    color: #9ca3af;
     font-weight: 400;
   }
 
-  .input-with-unit {
+  .input-wrapper {
     position: relative;
     display: flex;
   }
 
-  .input-with-unit input {
-    flex: 1;
-    padding-right: 3.5rem;
-  }
-
-  .unit {
+  .input-suffix {
     position: absolute;
-    right: 0.75rem;
+    right: 0.625rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8;
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     font-weight: 500;
+    color: #9ca3af;
     pointer-events: none;
   }
 
-  .indicateurs {
-    background: #f8fafc;
-    border-top: 1px solid #e2e8f0;
+  .indicators-section {
     padding: 1rem 1.25rem;
+    background: #f9fafb;
   }
 
-  .indicateur-title {
-    font-size: 0.7rem;
-    color: #64748b;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+  .indicator-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.625rem;
     margin-bottom: 0.75rem;
   }
 
-  .indicateur-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-
-  .indicateur {
+  .indicator {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
-    padding: 0.6rem 0.75rem;
-    border-radius: 8px;
-    background: white;
-    border: 1px solid #e2e8f0;
-    position: relative;
+    gap: 0.125rem;
+    padding: 0.5rem 0.75rem;
+    background: #ffffff;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
   }
 
-  .indicateur.highlight {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .indicateur .label {
-    font-size: 0.65rem;
-    color: #64748b;
+  .indicator-label {
+    font-size: 0.5625rem;
+    font-weight: 600;
+    color: #6b7280;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
   }
 
-  .indicateur .value {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #1e293b;
-    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+  .indicator-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1a1d21;
   }
 
-  .indicateur.highlight .value {
-    font-size: 1.1rem;
-  }
-
-  .indicateur .status {
-    display: flex;
+  .indicator-qf {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
     align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1.5px solid #e5e7eb;
+    transition: all 0.2s ease;
   }
 
-  .indicateur.ok {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  .indicator-qf.ok {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
     border-color: #34d399;
   }
 
-  .indicateur.ok .value {
+  .indicator-qf.alert {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-color: #f87171;
+  }
+
+  .qf-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .qf-label {
+    font-size: 0.5625rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .indicator-qf.ok .qf-label {
+    color: #059669;
+  }
+
+  .indicator-qf.alert .qf-label {
+    color: #dc2626;
+  }
+
+  .qf-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1a1d21;
+  }
+
+  .indicator-qf.ok .qf-value {
     color: #065f46;
   }
 
-  .indicateur.ok .status {
+  .indicator-qf.alert .qf-value {
+    color: #991b1b;
+  }
+
+  .qf-reference {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.125rem;
+  }
+
+  .qf-ref-label {
+    font-size: 0.5625rem;
+    font-weight: 500;
+    color: #9ca3af;
+    text-transform: uppercase;
+  }
+
+  .qf-ref-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280;
+  }
+
+  .qf-status {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qf-status svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .indicator-qf.ok .qf-status {
     background: #10b981;
     color: white;
   }
 
-  .indicateur.alerte {
-    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-    border-color: #f87171;
-  }
-
-  .indicateur.alerte .value {
-    color: #991b1b;
-  }
-
-  .indicateur.alerte .status {
+  .indicator-qf.alert .qf-status {
     background: #ef4444;
     color: white;
   }
 
-  @media (max-width: 480px) {
-    .form-content {
-      grid-template-columns: 1fr;
+  @media (max-width: 1024px) {
+    .form-section {
+      padding: 1rem 1.5rem;
     }
 
-    .indicateur-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .indicateur.highlight {
-      grid-column: 1;
+    .indicators-section {
+      padding: 1rem 1.5rem;
     }
   }
 </style>

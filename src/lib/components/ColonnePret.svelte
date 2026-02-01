@@ -12,15 +12,17 @@
     [TYPES_PRETS.AMORTISSABLE]: 'Amortissable',
     [TYPES_PRETS.PTZ]: 'PTZ',
     [TYPES_PRETS.IN_FINE]: 'In Fine',
-    [TYPES_PRETS.RELAIS]: 'Prêt Relais'
+    [TYPES_PRETS.RELAIS]: 'Relais'
   };
 
   const typesColors = {
-    [TYPES_PRETS.AMORTISSABLE]: '#0ea5e9',
-    [TYPES_PRETS.PTZ]: '#10b981',
-    [TYPES_PRETS.IN_FINE]: '#f59e0b',
-    [TYPES_PRETS.RELAIS]: '#8b5cf6'
+    [TYPES_PRETS.AMORTISSABLE]: { bg: '#dbeafe', text: '#1e40af', border: '#93c5fd' },
+    [TYPES_PRETS.PTZ]: { bg: '#d1fae5', text: '#065f46', border: '#6ee7b7' },
+    [TYPES_PRETS.IN_FINE]: { bg: '#fef3c7', text: '#92400e', border: '#fcd34d' },
+    [TYPES_PRETS.RELAIS]: { bg: '#ede9fe', text: '#5b21b6', border: '#c4b5fd' }
   };
+
+  $: typeStyle = typesColors[pret.type];
 
   $: montantRelaisAutorise = pret.type === TYPES_PRETS.RELAIS
     ? calculerMontantRelais(pret.valeurBien, pret.capitalRestantDu, pret.pourcentageFinancement)
@@ -59,37 +61,42 @@
   }
 </script>
 
-<div class="colonne-pret" class:inactive={!pret.actif} style="--type-color: {typesColors[pret.type]}">
-  <div class="header">
-    <label class="toggle-actif">
+<div class="pret-card" class:inactive={!pret.actif} class:expanded={pret.actif}>
+  <div class="card-header">
+    <label class="toggle">
       <input
         type="checkbox"
         checked={pret.actif}
         on:change={(e) => handleCheckboxUpdate('actif', e)}
       />
-      <span class="toggle-slider"></span>
+      <span class="toggle-track">
+        <span class="toggle-thumb"></span>
+      </span>
     </label>
-    <span class="pret-numero">Prêt {index + 1}</span>
+    <span class="pret-label">Prêt {index + 1}</span>
     {#if pret.actif}
-      <span class="type-badge" style="background: {typesColors[pret.type]}">{typesLabels[pret.type]}</span>
+      <span class="type-tag" style="background: {typeStyle.bg}; color: {typeStyle.text}; border-color: {typeStyle.border}">
+        {typesLabels[pret.type]}
+      </span>
     {/if}
   </div>
 
   {#if pret.actif}
-    <div class="form-content">
-      <div class="form-group">
+    <div class="card-body">
+      <div class="field">
         <label for="label-{index}">Libellé</label>
         <input
           type="text"
           id="label-{index}"
           value={pret.label}
           on:input={(e) => handleUpdate('label', e.target.value)}
-          placeholder="Ex: Prêt principal"
+          placeholder="Nom du prêt"
+          class="input-text"
         />
       </div>
 
-      <div class="form-group">
-        <label for="type-{index}">Type</label>
+      <div class="field">
+        <label for="type-{index}">Type de prêt</label>
         <select
           id="type-{index}"
           value={pret.type}
@@ -104,9 +111,9 @@
       <div class="separator"></div>
 
       {#if pret.type === TYPES_PRETS.RELAIS}
-        <div class="form-group">
+        <div class="field">
           <label for="valeurBien-{index}">Valeur du bien</label>
-          <div class="input-with-unit">
+          <div class="input-group">
             <input
               type="number"
               id="valeurBien-{index}"
@@ -115,49 +122,51 @@
               min="0"
               step="1000"
             />
-            <span class="unit">€</span>
+            <span class="suffix">€</span>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="capitalRestantDu-{index}">Capital restant dû</label>
-          <div class="input-with-unit">
-            <input
-              type="number"
-              id="capitalRestantDu-{index}"
-              value={pret.capitalRestantDu}
-              on:input={(e) => handleNumberUpdate('capitalRestantDu', e)}
-              min="0"
-              step="1000"
-            />
-            <span class="unit">€</span>
+        <div class="field-row">
+          <div class="field">
+            <label for="capitalRestantDu-{index}">CRD existant</label>
+            <div class="input-group">
+              <input
+                type="number"
+                id="capitalRestantDu-{index}"
+                value={pret.capitalRestantDu}
+                on:input={(e) => handleNumberUpdate('capitalRestantDu', e)}
+                min="0"
+                step="1000"
+              />
+              <span class="suffix">€</span>
+            </div>
+          </div>
+
+          <div class="field small">
+            <label for="pourcentageFinancement-{index}">% finc.</label>
+            <div class="input-group">
+              <input
+                type="number"
+                id="pourcentageFinancement-{index}"
+                value={pret.pourcentageFinancement}
+                on:input={(e) => handleNumberUpdate('pourcentageFinancement', e)}
+                min="0"
+                max="100"
+                step="5"
+              />
+              <span class="suffix">%</span>
+            </div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="pourcentageFinancement-{index}">% financement</label>
-          <div class="input-with-unit">
-            <input
-              type="number"
-              id="pourcentageFinancement-{index}"
-              value={pret.pourcentageFinancement}
-              on:input={(e) => handleNumberUpdate('pourcentageFinancement', e)}
-              min="0"
-              max="100"
-              step="5"
-            />
-            <span class="unit">%</span>
-          </div>
-        </div>
-
-        <div class="indicateur-box" class:danger={montantRelaisNegatif}>
-          <span class="ind-label">Montant autorisé</span>
-          <span class="ind-value">{formatMontant(montantRelaisAutorise)}</span>
+        <div class="result-box" class:danger={montantRelaisNegatif}>
+          <span class="result-label">Montant autorisé</span>
+          <span class="result-value">{formatMontant(montantRelaisAutorise)}</span>
         </div>
       {:else}
-        <div class="form-group">
-          <label for="montant-{index}">Montant</label>
-          <div class="input-with-unit">
+        <div class="field">
+          <label for="montant-{index}">Montant emprunté</label>
+          <div class="input-group">
             <input
               type="number"
               id="montant-{index}"
@@ -166,84 +175,88 @@
               min="0"
               step="1000"
             />
-            <span class="unit">€</span>
+            <span class="suffix">€</span>
           </div>
         </div>
       {/if}
 
       {#if pret.type === TYPES_PRETS.PTZ}
-        <div class="form-group">
-          <label for="dureeDiffere-{index}">Différé</label>
-          <div class="input-with-unit">
-            <input
-              type="number"
-              id="dureeDiffere-{index}"
-              value={pret.dureeDiffere}
-              on:input={(e) => handleNumberUpdate('dureeDiffere', e)}
-              min="0"
-              max="300"
-            />
-            <span class="unit">mois</span>
+        <div class="field-row">
+          <div class="field">
+            <label for="dureeDiffere-{index}">Différé</label>
+            <div class="input-group">
+              <input
+                type="number"
+                id="dureeDiffere-{index}"
+                value={pret.dureeDiffere}
+                on:input={(e) => handleNumberUpdate('dureeDiffere', e)}
+                min="0"
+                max="300"
+              />
+              <span class="suffix">mois</span>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="dureeRemboursement-{index}">Remboursement</label>
-          <div class="input-with-unit">
-            <input
-              type="number"
-              id="dureeRemboursement-{index}"
-              value={pret.dureeRemboursement}
-              on:input={(e) => handleNumberUpdate('dureeRemboursement', e)}
-              min="1"
-              max="300"
-            />
-            <span class="unit">mois</span>
+          <div class="field">
+            <label for="dureeRemboursement-{index}">Remb.</label>
+            <div class="input-group">
+              <input
+                type="number"
+                id="dureeRemboursement-{index}"
+                value={pret.dureeRemboursement}
+                on:input={(e) => handleNumberUpdate('dureeRemboursement', e)}
+                min="1"
+                max="300"
+              />
+              <span class="suffix">mois</span>
+            </div>
           </div>
         </div>
       {:else}
-        <div class="form-group">
-          <label for="dureeMois-{index}">Durée</label>
-          <div class="input-with-unit">
-            <input
-              type="number"
-              id="dureeMois-{index}"
-              value={pret.dureeMois}
-              on:input={(e) => handleNumberUpdate('dureeMois', e)}
-              min="1"
-              max="360"
-            />
-            <span class="unit">mois</span>
-          </div>
-        </div>
-
-        {#if pret.type !== TYPES_PRETS.PTZ}
-          <div class="form-group">
-            <label for="tauxAnnuel-{index}">Taux nominal</label>
-            <div class="input-with-unit">
+        <div class="field-row">
+          <div class="field">
+            <label for="dureeMois-{index}">Durée</label>
+            <div class="input-group">
               <input
                 type="number"
-                id="tauxAnnuel-{index}"
-                value={pret.tauxAnnuel}
-                on:input={(e) => handleNumberUpdate('tauxAnnuel', e)}
-                min="0"
-                max="20"
-                step="0.01"
+                id="dureeMois-{index}"
+                value={pret.dureeMois}
+                on:input={(e) => handleNumberUpdate('dureeMois', e)}
+                min="1"
+                max="360"
               />
-              <span class="unit">%</span>
+              <span class="suffix">mois</span>
             </div>
           </div>
-        {/if}
+
+          {#if pret.type !== TYPES_PRETS.PTZ}
+            <div class="field">
+              <label for="tauxAnnuel-{index}">Taux</label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  id="tauxAnnuel-{index}"
+                  value={pret.tauxAnnuel}
+                  on:input={(e) => handleNumberUpdate('tauxAnnuel', e)}
+                  min="0"
+                  max="20"
+                  step="0.01"
+                />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+          {/if}
+        </div>
       {/if}
 
       <div class="separator"></div>
 
-      <div class="section-title">Assurance</div>
+      <div class="section-label">Assurance</div>
 
-      <div class="form-row">
-        <div class="form-group compact">
+      <div class="field-row">
+        <div class="field">
           <label for="tauxAssurance-{index}">Taux</label>
-          <div class="input-with-unit">
+          <div class="input-group">
             <input
               type="number"
               id="tauxAssurance-{index}"
@@ -253,13 +266,13 @@
               max="5"
               step="0.01"
             />
-            <span class="unit">%</span>
+            <span class="suffix">%</span>
           </div>
         </div>
 
-        <div class="form-group compact">
+        <div class="field">
           <label for="quotiteAssurance-{index}">Quotité</label>
-          <div class="input-with-unit">
+          <div class="input-group">
             <input
               type="number"
               id="quotiteAssurance-{index}"
@@ -269,41 +282,46 @@
               max="200"
               step="10"
             />
-            <span class="unit">%</span>
+            <span class="suffix">%</span>
           </div>
         </div>
       </div>
 
-      <label class="checkbox-label">
+      <label class="checkbox-field">
         <input
           type="checkbox"
           checked={pret.assuranceSurCRD}
           on:change={(e) => handleCheckboxUpdate('assuranceSurCRD', e)}
         />
-        <span class="checkmark"></span>
-        Sur capital restant dû
+        <span class="checkbox-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20,6 9,17 4,12"/>
+          </svg>
+        </span>
+        <span class="checkbox-text">Sur capital restant dû</span>
       </label>
 
       {#if pret.type === TYPES_PRETS.AMORTISSABLE && echeanceEstimee > 0}
-        <div class="indicateur-box success">
-          <span class="ind-label">Échéance estimée (hors ass.)</span>
-          <span class="ind-value">{formatMontant(echeanceEstimee)}/mois</span>
+        <div class="result-box success">
+          <span class="result-label">Échéance estimée (hors ass.)</span>
+          <span class="result-value">{formatMontant(echeanceEstimee)}<small>/mois</small></span>
         </div>
       {/if}
 
       {#if pret.type === TYPES_PRETS.AMORTISSABLE}
         <button
-          class="btn-calculateur"
+          class="btn-calculator"
           on:click={() => showCalculateur = !showCalculateur}
+          class:active={showCalculateur}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="4" y="2" width="16" height="20" rx="2"/>
             <line x1="8" y1="6" x2="16" y2="6"/>
             <line x1="8" y1="10" x2="16" y2="10"/>
             <line x1="8" y1="14" x2="12" y2="14"/>
             <line x1="8" y1="18" x2="12" y2="18"/>
           </svg>
-          {showCalculateur ? 'Masquer' : 'Calculateur'} 3→4
+          Calculateur
         </button>
 
         {#if showCalculateur}
@@ -321,304 +339,327 @@
 </div>
 
 <style>
-  .colonne-pret {
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    overflow: hidden;
+  .pret-card {
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    min-height: 52px;
     transition: all 0.2s ease;
   }
 
-  .colonne-pret:hover:not(.inactive) {
-    border-color: var(--type-color, #0ea5e9);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  .pret-card.inactive {
+    background: #f9fafb;
   }
 
-  .colonne-pret.inactive {
-    background: #f8fafc;
-    border-color: #e2e8f0;
-    opacity: 0.7;
+  .pret-card.inactive .card-header {
+    padding: 0.875rem 1rem;
   }
 
-  .header {
+  .card-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.85rem 1rem;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
+    gap: 0.625rem;
+    padding: 0.75rem 1rem;
+    background: #f9fafb;
+    border-bottom: 1px solid #f0f1f3;
   }
 
-  .toggle-actif {
+  .toggle {
     position: relative;
-    display: inline-block;
-    width: 36px;
-    height: 20px;
+    display: inline-flex;
     cursor: pointer;
   }
 
-  .toggle-actif input {
+  .toggle input {
+    position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
   }
 
-  .toggle-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #cbd5e1;
-    transition: 0.3s;
-    border-radius: 20px;
+  .toggle-track {
+    width: 32px;
+    height: 18px;
+    background: #d1d5db;
+    border-radius: 9px;
+    position: relative;
+    transition: background 0.2s ease;
   }
 
-  .toggle-slider:before {
+  .toggle input:checked + .toggle-track {
+    background: #3b82f6;
+  }
+
+  .toggle-thumb {
     position: absolute;
-    content: "";
-    height: 14px;
+    top: 2px;
+    left: 2px;
     width: 14px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.3s;
+    height: 14px;
+    background: white;
     border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
   }
 
-  .toggle-actif input:checked + .toggle-slider {
-    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  .toggle input:checked + .toggle-track .toggle-thumb {
+    transform: translateX(14px);
   }
 
-  .toggle-actif input:checked + .toggle-slider:before {
-    transform: translateX(16px);
-  }
-
-  .pret-numero {
+  .pret-label {
+    font-size: 0.875rem;
     font-weight: 600;
-    color: #1e293b;
-    font-size: 0.9rem;
+    color: #374151;
   }
 
-  .type-badge {
+  .type-tag {
     margin-left: auto;
-    font-size: 0.65rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    color: white;
+    font-size: 0.625rem;
     font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    border: 1px solid;
   }
 
-  .form-content {
+  .card-body {
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .form-group.compact {
-    flex: 1;
-  }
-
-  .form-row {
-    display: flex;
     gap: 0.75rem;
   }
 
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+  }
+
+  .field.small {
+    flex: 0 0 80px;
+  }
+
+  .field-row {
+    display: flex;
+    gap: 0.625rem;
+  }
+
   label {
-    font-size: 0.65rem;
-    color: #64748b;
+    font-size: 0.625rem;
     font-weight: 600;
+    color: #6b7280;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
   }
 
   input, select {
-    padding: 0.55rem 0.65rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    background: #f8fafc;
-    transition: all 0.2s ease;
+    width: 100%;
+    padding: 0.5rem 0.625rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 5px;
+    font-size: 0.8125rem;
+    background: #fafbfc;
+    transition: all 0.15s ease;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: #1a1d21;
+  }
+
+  input[type="text"], select {
+    font-family: 'DM Sans', sans-serif;
   }
 
   input[type="number"] {
     text-align: right;
-    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-    font-weight: 500;
+    padding-right: 2.25rem;
   }
 
   input:focus, select:focus {
     outline: none;
-    border-color: var(--type-color, #0ea5e9);
-    background: white;
-    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    border-color: #3b82f6;
+    background: #ffffff;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
   }
 
   select {
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.5rem center;
-    padding-right: 2rem;
+    padding-right: 1.75rem;
   }
 
-  .input-with-unit {
+  .input-group {
     position: relative;
     display: flex;
   }
 
-  .input-with-unit input {
-    flex: 1;
-    padding-right: 2.5rem;
-  }
-
-  .unit {
+  .suffix {
     position: absolute;
-    right: 0.65rem;
+    right: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8;
-    font-size: 0.7rem;
+    font-size: 0.625rem;
     font-weight: 500;
+    color: #9ca3af;
     pointer-events: none;
   }
 
   .separator {
     height: 1px;
-    background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    background: #f0f1f3;
     margin: 0.25rem 0;
   }
 
-  .section-title {
-    font-size: 0.65rem;
-    color: #64748b;
+  .section-label {
+    font-size: 0.5625rem;
     font-weight: 600;
+    color: #9ca3af;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
   }
 
-  .checkbox-label {
+  .checkbox-field {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.8rem;
-    color: #475569;
     cursor: pointer;
-    text-transform: none;
-    font-weight: 500;
   }
 
-  .checkbox-label input {
+  .checkbox-field input {
     display: none;
   }
 
-  .checkmark {
-    width: 18px;
-    height: 18px;
-    border: 2px solid #cbd5e1;
-    border-radius: 4px;
+  .checkbox-box {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    background: #fafbfc;
+    transition: all 0.15s ease;
     flex-shrink: 0;
   }
 
-  .checkbox-label input:checked + .checkmark {
-    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-    border-color: #0284c7;
+  .checkbox-box svg {
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+    color: white;
+    transition: opacity 0.15s ease;
   }
 
-  .checkbox-label input:checked + .checkmark::after {
-    content: '';
-    width: 5px;
-    height: 9px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
+  .checkbox-field input:checked + .checkbox-box {
+    background: #3b82f6;
+    border-color: #3b82f6;
   }
 
-  .indicateur-box {
+  .checkbox-field input:checked + .checkbox-box svg {
+    opacity: 1;
+  }
+
+  .checkbox-text {
+    font-size: 0.75rem;
+    color: #4b5563;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .result-box {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.65rem 0.85rem;
-    background: #f1f5f9;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    padding: 0.625rem 0.75rem;
+    background: #f3f4f6;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
   }
 
-  .indicateur-box.success {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    border-color: #34d399;
+  .result-box.success {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
   }
 
-  .indicateur-box.danger {
-    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-    border-color: #f87171;
+  .result-box.danger {
+    background: #fef2f2;
+    border-color: #fecaca;
   }
 
-  .ind-label {
-    font-size: 0.65rem;
-    color: #64748b;
+  .result-label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: #6b7280;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
 
-  .indicateur-box.success .ind-label {
-    color: #065f46;
+  .result-box.success .result-label {
+    color: #059669;
   }
 
-  .indicateur-box.danger .ind-label {
-    color: #991b1b;
+  .result-box.danger .result-label {
+    color: #dc2626;
   }
 
-  .ind-value {
-    font-size: 0.95rem;
+  .result-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9375rem;
     font-weight: 700;
-    color: #1e293b;
-    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    color: #1a1d21;
   }
 
-  .indicateur-box.success .ind-value {
+  .result-value small {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: #6b7280;
+  }
+
+  .result-box.success .result-value {
     color: #065f46;
   }
 
-  .indicateur-box.danger .ind-value {
+  .result-box.danger .result-value {
     color: #991b1b;
   }
 
-  .btn-calculateur {
+  .btn-calculator {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.6rem;
-    background: #f1f5f9;
-    border: 1px dashed #cbd5e1;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    gap: 0.375rem;
+    padding: 0.5rem;
+    background: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 5px;
+    font-size: 0.75rem;
     font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'DM Sans', sans-serif;
   }
 
-  .btn-calculateur:hover {
-    background: #e2e8f0;
-    border-color: #94a3b8;
-    color: #475569;
+  .btn-calculator svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .btn-calculator:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    color: #374151;
+  }
+
+  .btn-calculator.active {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    border-style: solid;
+    color: #2563eb;
   }
 </style>

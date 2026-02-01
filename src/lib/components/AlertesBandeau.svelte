@@ -12,7 +12,7 @@
       result.push({
         type: 'warning',
         icon: 'qf',
-        message: `Quotient Familial RAV insuffisant`,
+        message: `Quotient Familial insuffisant`,
         detail: `${formatMontant(indicateurs.qfRAV)} < ${formatMontant(indicateurs.qfReference)} (référence)`
       });
     }
@@ -31,7 +31,7 @@
           type: 'error',
           icon: 'endettement',
           message: `Endettement dépasse ${emprunteur.seuilEndettementMax}%`,
-          detail: `Maximum atteint : ${tauxMax.toFixed(1)}% au mois ${premierDepassement.mois}`
+          detail: `Maximum : ${tauxMax.toFixed(1)}% au mois ${premierDepassement.mois}`
         });
       }
     }
@@ -48,7 +48,7 @@
             type: 'error',
             icon: 'relais',
             message: `Prêt relais ${index + 1} : montant négatif`,
-            detail: `Capital restant dû trop élevé par rapport à la valeur du bien`
+            detail: `CRD trop élevé par rapport à la valeur du bien`
           });
         }
       }
@@ -67,32 +67,32 @@
 </script>
 
 {#if alertes.length > 0}
-  <div class="alertes-container">
+  <div class="alerts-strip">
     {#each alertes as alerte}
-      <div class="alerte alerte-{alerte.type}">
-        <div class="alerte-icon">
+      <div class="alert alert-{alerte.type}">
+        <div class="alert-icon">
           {#if alerte.icon === 'qf'}
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
           {:else if alerte.icon === 'endettement'}
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
               <line x1="12" y1="9" x2="12" y2="13"/>
               <line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
           {:else}
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
           {/if}
         </div>
-        <div class="alerte-content">
-          <span class="alerte-message">{alerte.message}</span>
-          <span class="alerte-detail">{alerte.detail}</span>
+        <div class="alert-content">
+          <span class="alert-message">{alerte.message}</span>
+          <span class="alert-detail">{alerte.detail}</span>
         </div>
       </div>
     {/each}
@@ -100,26 +100,28 @@
 {/if}
 
 <style>
-  .alertes-container {
+  .alerts-strip {
     display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
+    flex-wrap: wrap;
+    gap: 0.625rem;
     margin-bottom: 1.25rem;
   }
 
-  .alerte {
+  .alert {
     display: flex;
-    align-items: flex-start;
-    gap: 0.85rem;
-    padding: 0.85rem 1.15rem;
-    border-radius: 10px;
-    animation: slideIn 0.3s ease;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 1rem;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 280px;
+    animation: fadeIn 0.25s ease;
   }
 
-  @keyframes slideIn {
+  @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(-10px);
+      transform: translateY(-4px);
     }
     to {
       opacity: 1;
@@ -127,65 +129,76 @@
     }
   }
 
-  .alerte-error {
-    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-    border: 1px solid #fca5a5;
+  .alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
   }
 
-  .alerte-warning {
-    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-    border: 1px solid #fcd34d;
+  .alert-warning {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
   }
 
-  .alerte-icon {
+  .alert-icon {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .alerte-error .alerte-icon {
+  .alert-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .alert-error .alert-icon {
     background: #ef4444;
     color: white;
   }
 
-  .alerte-warning .alerte-icon {
+  .alert-warning .alert-icon {
     background: #f59e0b;
     color: white;
   }
 
-  .alerte-content {
+  .alert-content {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
-    padding-top: 0.15rem;
+    gap: 0.125rem;
   }
 
-  .alerte-message {
+  .alert-message {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8125rem;
   }
 
-  .alerte-error .alerte-message {
+  .alert-error .alert-message {
     color: #b91c1c;
   }
 
-  .alerte-warning .alerte-message {
+  .alert-warning .alert-message {
     color: #92400e;
   }
 
-  .alerte-detail {
-    font-size: 0.8rem;
+  .alert-detail {
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
   }
 
-  .alerte-error .alerte-detail {
+  .alert-error .alert-detail {
     color: #dc2626;
   }
 
-  .alerte-warning .alerte-detail {
+  .alert-warning .alert-detail {
     color: #b45309;
+  }
+
+  @media (max-width: 640px) {
+    .alert {
+      min-width: 100%;
+    }
   }
 </style>

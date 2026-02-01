@@ -24,74 +24,75 @@
   }
 </script>
 
-<section class="zone-amortissement">
+<section class="tableau-section">
   <div class="section-header">
-    <h2>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <div class="header-title">
+      <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M3 3v18h18"/>
         <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
       </svg>
-      Tableau d'amortissement
-    </h2>
+      <span>Tableau d'amortissement</span>
+    </div>
     {#if $tableauConsolide.length > 0}
-      <span class="badge">{$tableauConsolide.length} mois</span>
+      <span class="duration-badge">{$tableauConsolide.length} mois</span>
     {/if}
   </div>
 
   {#if $tableauConsolide.length === 0}
     <div class="empty-state">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M3 3v18h18"/>
-        <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <line x1="3" y1="9" x2="21" y2="9"/>
+        <line x1="9" y1="21" x2="9" y2="9"/>
       </svg>
-      <p>Configurez au moins un prêt avec un montant pour voir le tableau d'amortissement</p>
+      <p>Configurez au moins un prêt avec un montant pour voir le tableau</p>
     </div>
   {:else}
-    <div class="table-wrapper">
+    <div class="table-container">
       <table>
         <thead>
-          <tr class="header-row">
-            <th class="sticky-col mois">Mois</th>
+          <tr class="header-main">
+            <th class="sticky-col col-mois">Mois</th>
             {#each tableauxActifs as t}
-              <th colspan="4" class="pret-header">{t.label}</th>
+              <th colspan="4" class="col-pret" style="--pret-color: {getPretColor(t.index)}">{t.label}</th>
             {/each}
-            <th colspan="2" class="synthese-header">Synthèse</th>
+            <th colspan="2" class="col-synthese">Synthèse</th>
           </tr>
-          <tr class="subheader-row">
+          <tr class="header-sub">
             <th class="sticky-col"></th>
             {#each tableauxActifs as _}
-              <th>CRD</th>
-              <th>Intérêts</th>
-              <th>Assur.</th>
-              <th>Échéance</th>
+              <th class="sub">CRD</th>
+              <th class="sub">Intérêts</th>
+              <th class="sub">Assur.</th>
+              <th class="sub">Échéance</th>
             {/each}
-            <th>Total</th>
-            <th>Endett.</th>
+            <th class="sub total">Total</th>
+            <th class="sub ratio">Endett.</th>
           </tr>
         </thead>
         <tbody>
           {#each $tableauConsolide as ligne}
             {@const tauxEndettement = getTauxEndettement(ligne.echeanceTotale)}
             {@const depassement = isDepassementSeuil(tauxEndettement)}
-            <tr class:depassement>
-              <td class="sticky-col mois">{ligne.mois}</td>
+            <tr class:row-alert={depassement}>
+              <td class="sticky-col col-mois">{ligne.mois}</td>
               {#each tableauxActifs as t}
                 {@const lignePret = ligne.prets[t.index]}
                 {#if lignePret}
-                  <td class="montant crd">{formatMontant(lignePret.crd)}</td>
-                  <td class="montant interets">{formatMontant(lignePret.interets)}</td>
-                  <td class="montant assurance">{formatMontant(lignePret.assurance)}</td>
-                  <td class="montant echeance">{formatMontant(lignePret.echeanceTTC)}</td>
+                  <td class="num crd">{formatMontant(lignePret.crd)}</td>
+                  <td class="num int">{formatMontant(lignePret.interets)}</td>
+                  <td class="num ass">{formatMontant(lignePret.assurance)}</td>
+                  <td class="num ech">{formatMontant(lignePret.echeanceTTC)}</td>
                 {:else}
-                  <td class="montant vide">-</td>
-                  <td class="montant vide">-</td>
-                  <td class="montant vide">-</td>
-                  <td class="montant vide">-</td>
+                  <td class="num empty">-</td>
+                  <td class="num empty">-</td>
+                  <td class="num empty">-</td>
+                  <td class="num empty">-</td>
                 {/if}
               {/each}
-              <td class="montant total">{formatMontant(ligne.echeanceTotale)}</td>
-              <td class="pourcentage" class:alerte={depassement}>
-                {tauxEndettement.toFixed(2)}%
+              <td class="num total-val">{formatMontant(ligne.echeanceTotale)}</td>
+              <td class="num ratio-val" class:alert={depassement}>
+                {tauxEndettement.toFixed(1)}%
               </td>
             </tr>
           {/each}
@@ -99,48 +100,59 @@
       </table>
     </div>
 
-    <div class="legende">
-      <span class="legende-item">
-        <span class="color-box depassement"></span>
-        Endettement supérieur à {$emprunteur.seuilEndettementMax}%
-      </span>
+    <div class="table-footer">
+      <div class="legend-item">
+        <span class="legend-color alert"></span>
+        <span class="legend-text">Endettement > {$emprunteur.seuilEndettementMax}%</span>
+      </div>
     </div>
   {/if}
 </section>
 
+<script context="module">
+  const pretColors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
+  function getPretColor(index) {
+    return pretColors[index % pretColors.length];
+  }
+</script>
+
 <style>
-  .zone-amortissement {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  .tableau-section {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
     overflow: hidden;
   }
 
   .section-header {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    padding: 1rem 1.25rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0.875rem 1.25rem;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   }
 
-  .section-header h2 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: white;
+  .header-title {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    color: white;
+    font-size: 0.9375rem;
+    font-weight: 600;
   }
 
-  .badge {
-    background: rgba(255, 255, 255, 0.15);
-    padding: 0.3rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
+  .header-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .duration-badge {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.25rem 0.625rem;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
     color: white;
-    font-weight: 500;
   }
 
   .empty-state {
@@ -148,29 +160,53 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 2rem;
-    color: #94a3b8;
+    padding: 3rem 2rem;
+    color: #9ca3af;
     text-align: center;
-    background: #f8fafc;
+    background: #f9fafb;
+  }
+
+  .empty-state svg {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 0.75rem;
   }
 
   .empty-state p {
-    margin: 1rem 0 0 0;
-    font-size: 0.9rem;
-    max-width: 300px;
+    margin: 0;
+    font-size: 0.875rem;
+    max-width: 280px;
   }
 
-  .table-wrapper {
+  .table-container {
     overflow-x: auto;
-    max-height: 500px;
+    max-height: 420px;
     overflow-y: auto;
+  }
+
+  .table-container::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+
+  .table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  .table-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.75rem;
-    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    font-family: 'JetBrains Mono', monospace;
   }
 
   thead {
@@ -179,76 +215,86 @@
     z-index: 10;
   }
 
-  .header-row th {
-    padding: 0.75rem 0.5rem;
+  .header-main th {
+    padding: 0.625rem 0.5rem;
     text-align: center;
     font-weight: 600;
+    font-size: 0.6875rem;
     background: #1e293b;
     color: white;
     border-right: 1px solid #334155;
   }
 
-  .header-row th:last-child {
+  .header-main th:last-child {
     border-right: none;
   }
 
-  .pret-header {
+  .col-pret {
     background: #334155 !important;
   }
 
-  .synthese-header {
+  .col-synthese {
     background: #475569 !important;
   }
 
-  .subheader-row th {
-    padding: 0.5rem 0.35rem;
+  .header-sub th {
+    padding: 0.375rem 0.375rem;
     text-align: right;
     font-weight: 500;
-    font-size: 0.65rem;
+    font-size: 0.5625rem;
     text-transform: uppercase;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.03em;
     background: #475569;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255,255,255,0.75);
     border-right: 1px solid #64748b;
   }
 
-  .subheader-row th:last-child {
+  .header-sub th:last-child {
     border-right: none;
   }
 
+  .header-sub th.total {
+    background: #1e40af;
+    color: white;
+  }
+
+  .header-sub th.ratio {
+    background: #0f766e;
+    color: white;
+  }
+
   tbody tr {
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #f0f1f3;
     transition: background 0.1s ease;
   }
 
   tbody tr:nth-child(even) {
-    background: #f8fafc;
+    background: #fafbfc;
   }
 
   tbody tr:hover {
     background: #f1f5f9;
   }
 
-  tbody tr.depassement {
+  tbody tr.row-alert {
     background: #fef2f2;
   }
 
-  tbody tr.depassement:hover {
+  tbody tr.row-alert:hover {
     background: #fee2e2;
   }
 
   td {
-    padding: 0.45rem 0.5rem;
-    text-align: right;
+    padding: 0.375rem 0.5rem;
     white-space: nowrap;
   }
 
   .sticky-col {
     position: sticky;
     left: 0;
-    background: #f1f5f9;
+    background: #f8fafc;
     z-index: 5;
-    border-right: 2px solid #cbd5e1;
+    border-right: 2px solid #e5e7eb;
   }
 
   thead .sticky-col {
@@ -256,105 +302,88 @@
     z-index: 15;
   }
 
-  .mois {
+  .col-mois {
     text-align: center;
     font-weight: 700;
-    min-width: 55px;
-    color: #475569;
+    min-width: 50px;
+    color: #374151;
   }
 
-  thead .mois {
+  thead .col-mois {
     color: white;
   }
 
-  .montant {
-    min-width: 85px;
-    color: #475569;
+  .num {
+    text-align: right;
+    min-width: 75px;
+    color: #4b5563;
   }
 
-  .montant.vide {
-    color: #cbd5e1;
+  .num.empty {
+    color: #d1d5db;
   }
 
-  .montant.crd {
-    color: #64748b;
+  .num.crd {
+    color: #6b7280;
   }
 
-  .montant.interets {
-    color: #f59e0b;
+  .num.int {
+    color: #d97706;
   }
 
-  .montant.assurance {
-    color: #8b5cf6;
+  .num.ass {
+    color: #7c3aed;
   }
 
-  .montant.echeance {
+  .num.ech {
     font-weight: 600;
     color: #1e293b;
   }
 
-  .montant.total {
+  .num.total-val {
     font-weight: 700;
-    color: #0284c7;
-    background: #f0f9ff;
-    border-left: 2px solid #bae6fd;
+    color: #1e40af;
+    background: #eff6ff;
+    border-left: 2px solid #bfdbfe;
   }
 
-  .pourcentage {
-    min-width: 65px;
+  .num.ratio-val {
     font-weight: 600;
-    color: #10b981;
+    color: #0f766e;
+    min-width: 60px;
   }
 
-  .pourcentage.alerte {
-    color: #ef4444;
+  .num.ratio-val.alert {
+    color: #dc2626;
     font-weight: 700;
     background: #fef2f2;
   }
 
-  .legende {
+  .table-footer {
     display: flex;
     gap: 1.5rem;
-    padding: 0.85rem 1.25rem;
-    background: #f8fafc;
-    border-top: 1px solid #e2e8f0;
+    padding: 0.625rem 1rem;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
   }
 
-  .legende-item {
+  .legend-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    color: #64748b;
+    gap: 0.375rem;
+    font-size: 0.6875rem;
+    color: #6b7280;
   }
 
-  .color-box {
-    width: 14px;
-    height: 14px;
-    border-radius: 3px;
-    border: 1px solid #e2e8f0;
+  .legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    border: 1px solid #e5e7eb;
   }
 
-  .color-box.depassement {
+  .legend-color.alert {
     background: #fef2f2;
     border-color: #fca5a5;
-  }
-
-  .table-wrapper::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .table-wrapper::-webkit-scrollbar-track {
-    background: #f1f5f9;
-  }
-
-  .table-wrapper::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-  }
-
-  .table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
   }
 </style>
