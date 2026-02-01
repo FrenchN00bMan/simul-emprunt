@@ -1,6 +1,5 @@
-# Force clean build
-[phases.setup]
-cmds = ["npm cache clean --force"]
+# Configuration Nixpacks pour forcer un build propre
+# Pas de phase setup custom car npm n'est pas encore disponible
 
 [phases.install]
 cmds = ["rm -rf node_modules", "npm install"]
