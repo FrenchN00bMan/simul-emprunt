@@ -34,7 +34,7 @@
         <polyline points="9 22 9 12 15 12 15 22"/>
       </svg>
       <div class="brand-text">
-        <span class="brand-title">SimulPrêt</span>
+        <span class="brand-title">SimulPrêt</span><!-- v2 -->
         <span class="brand-subtitle">Financement immobilier</span>
       </div>
     </div>
