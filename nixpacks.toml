@@ -1,0 +1,9 @@
+# Force clean build
+[phases.setup]
+cmds = ["npm cache clean --force"]
+
+[phases.install]
+cmds = ["rm -rf node_modules", "npm install"]
+
+[phases.build]
+cmds = ["rm -rf dist", "npm run build"]
